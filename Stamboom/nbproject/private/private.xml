@@ -3,7 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jesse/Documents/NetBeansProjects/Stamboom/src/stamboom/Stamboom.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/stamboom/Stamboom.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/domain/Administratie.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/domain/PersoonMetGeneratie.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/domain/Persoon.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/stamboom/gui/StamboomFXController.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/domain/Gezin.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/controller/StamboomController.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/domain/Geslacht.java</file>
+            <file>file:/C:/Users/edwin/Documents/School/JCF41/boompje/Stamboom/src/gui/StamboomGUI.java</file>
         </group>
     </open-files>
 </project-private>

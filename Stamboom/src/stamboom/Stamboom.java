@@ -5,13 +5,21 @@
  */
 package stamboom;
 
-import java.awt.Image;
-import java.awt.event.KeyEvent;
+
+import domain.Administratie;
+import domain.Gezin;
+import domain.Persoon;
+import static java.time.Instant.now;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,11 +32,13 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import domain.Geslacht;
 
 /**
  *
@@ -40,44 +50,45 @@ public class Stamboom extends Application {
 //        new ImageView(new Image(getClass().getResourceAsStream("root.png")));
 //    private final Image depIcon = 
 //        new Image(getClass().getResourceAsStream("department.png"));
-    List<Employee> employees = Arrays.<Employee>asList(
-            new Employee("Ethan Williams", "Sales Department"),
-            new Employee("Emma Jones", "Sales Department"),
-            new Employee("Michael Brown", "Sales Department"),
-            new Employee("Anna Black", "Sales Department"),
-            new Employee("Rodger York", "Sales Department"),
-            new Employee("Susan Collins", "Sales Department"),
-            new Employee("Mike Graham", "IT Support"),
-            new Employee("Judy Mayer", "IT Support"),
-            new Employee("Gregory Smith", "IT Support"),
-            new Employee("Jacob Smith", "Accounts Department"),
-            new Employee("Isabella Johnson", "Accounts Department"));
-    TreeItem<String> rootNode = 
-        new TreeItem<String>("MyCompany Human Resources");
+    List<Persoon> employees;
+    Administratie admin;
+    TreeItem<String> rootNode = new TreeItem<String>("Root Node");
     
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    public Stamboom() {
+        admin = new Administratie();
+        Persoon piet = admin.addPersoon(Geslacht.MAN, new String[]{"Piet", "Franciscus"}, "Swinkels",
+                "", new GregorianCalendar(1950, Calendar.APRIL, 23), "ede", null);
+        Persoon teuntje = admin.addPersoon(Geslacht.VROUW, new String[]{"Teuntje"}, "Vries", "de",
+                new GregorianCalendar(1949, Calendar.MAY, 5), "Amersfoort", null);
+        Gezin pietEnTeuntje = admin.addHuwelijk(piet, teuntje, new GregorianCalendar(1970, Calendar.MAY, 23));
+        admin.addPersoon(domain.Geslacht.MAN, new String[]{"karel", "henkie"}, "ebole","van", Calendar.getInstance(), "afrika", pietEnTeuntje);
+        this.employees = admin.getPersonen();
     }
  
     @Override
     public void start(Stage stage) {
         rootNode.setExpanded(true);
-        for (Employee employee : employees) {
-            TreeItem<String> empLeaf = new TreeItem<String>(employee.getName());
+        for (Persoon persoon : employees) {
+            TreeItem<String> empLeaf = new TreeItem<>(persoon.getNaam());
             boolean found = false;
             for (TreeItem<String> depNode : rootNode.getChildren()) {
-                if (depNode.getValue().contentEquals(employee.getDepartment())){
+                if (depNode.getValue().contentEquals(persoon.getNaam())){
                     depNode.getChildren().add(empLeaf);
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                TreeItem depNode = new TreeItem(employee.getDepartment() 
-//                    ,new ImageView(depIcon)
+                TreeItem depNode = new TreeItem<>(persoon.getNaam(),
+                        new ImageView()
                 );
+                depNode = getTree(depNode,persoon);
                 rootNode.getChildren().add(depNode);
-                depNode.getChildren().add(empLeaf);
+                //depNode.getChildren().add(empLeaf);
             }
         }
  
@@ -98,6 +109,29 @@ public class Stamboom extends Application {
         box.getChildren().add(treeView);
         stage.setScene(scene);
         stage.show();
+    }
+    
+    public TreeItem getTree(TreeItem tree, Persoon persoon) {
+        if(persoon.getOuderlijkGezin() == null) {
+            return tree;
+        }
+        if(persoon.getOuderlijkGezin().getOuder1() != null) {
+            TreeItem depNode = new TreeItem<>(persoon.getOuderlijkGezin().getOuder1().getNaam(),
+                        new ImageView()
+            );
+            depNode = getTree(depNode, persoon.getOuderlijkGezin().getOuder1());
+            tree.getChildren().add(depNode);
+        }
+        if(persoon.getOuderlijkGezin().getOuder2() != null) {
+            TreeItem depNode = new TreeItem<>(persoon.getOuderlijkGezin().getOuder2().getNaam(),
+                        new ImageView()
+            );
+                        depNode = getTree(depNode, persoon.getOuderlijkGezin().getOuder1());
+
+            tree.getChildren().add(depNode);
+        }
+        return tree;
+       
     }
     
     private final class TextFieldTreeCellImpl extends TreeCell<String> {
@@ -181,33 +215,6 @@ public class Stamboom extends Application {
  
         private String getString() {
             return getItem() == null ? "" : getItem().toString();
-        }
-    }
-    
-    public static class Employee {
- 
-        private final SimpleStringProperty name;
-        private final SimpleStringProperty department;
- 
-        private Employee(String name, String department) {
-            this.name = new SimpleStringProperty(name);
-            this.department = new SimpleStringProperty(department);
-        }
- 
-        public String getName() {
-            return name.get();
-        }
- 
-        public void setName(String fName) {
-            name.set(fName);
-        }
- 
-        public String getDepartment() {
-            return department.get();
-        }
- 
-        public void setDepartment(String fName) {
-            department.set(fName);
         }
     }
 }
